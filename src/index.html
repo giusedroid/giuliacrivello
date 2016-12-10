@@ -212,7 +212,7 @@
 										<h1>contact form</h1>
 										<div class="row">                            
 											<div class="col-sm-12">
-												<p>Please, use the following form to get in touch with me from more information
+												<p id="form_feedback">Please, use the following form to get in touch with me from more information
 													or to set up a consult.
 												</p>
 												</div>                            
@@ -221,9 +221,9 @@
 										</div>
 									</div>
 								</div>
-								<div class="row">
+								<div class="row" id="form_container">
 									<div class="col-lg-12">
-										<form action="#" method="post" class="contact-form">
+										<!--<form class="contact-form">-->
 											<div class="col-sm-6 contact-form-left">
 												<div class="form-group">
 													<input name="name" type="text" class="form-control" id="name" placeholder="Name">
@@ -234,10 +234,10 @@
 											<div class="col-sm-6 contact-form-right">
 												<div class="form-group">
 													<textarea name="message" rows="6" class="form-control" id="comment" placeholder="Your message here..."></textarea>
-													<button type="submit" class="btn btn-default">Send</button>
+													<button class="btn btn-default" id="send_btn">Send</button>
 												</div>
 											</div>                        
-										</form>    
+										<!--</form>-->    
 									</div>                
 								</div>
 							</div>
@@ -335,6 +335,43 @@
         $('.single-page-nav a').click(function(){
         	$('.single-page-nav').removeClass('show');
         });
+
+		$('#send_btn').click(function(){
+			var empty = [];
+			var payload = {};
+
+			$('.form-control').each(function(){
+				console.log($(this).val());
+
+				if($(this).val() === ""){
+					empty.push($(this).attr('name'));
+				}else{
+					payload[$(this).attr('name')] = $(this).val();
+				}
+
+			});
+
+			if(empty.length > 0){
+				$('#form_feedback').html("Please, fill all the fields to send me an email.<br><br>");
+			}else{
+
+				$('#form_feedback').html("Thank you, I'll be in touch asap.<br><br>");
+				$(this).attr("disabled","true");
+
+				var jqxhr = $.post( "script/mail.php", payload,
+							 function(response) {
+								console.log( response );
+							})
+							.done(function() {
+								console.log( "second success" );
+							})
+							.fail(function() {
+								alert( "error" );
+							});
+
+			}
+
+		});
         
     });
 </script>
